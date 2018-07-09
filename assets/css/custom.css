@@ -1,0 +1,41 @@
+/* Write your custom CSS here */
+.no-padding {
+    padding-right: 0 !important;
+    padding-left: 0 !important;
+}
+
+input.error-message {
+    border: 1px solid #e85445;
+}
+p.error-message {
+	 color: #e85445;
+}
+.dropdown-menu > li > a:focus, .dropdown-menu > li > a:hover {
+  background:#0070E0;color:#fff
+}
+.btn:focus,
+input:focus {
+  background:#fff!important;
+  color:#0070E0;
+   border: 1px solid #0070E0 !important;
+}
+
+input[type="text"].Loading-inputbox {
+    background: rgba(255, 255, 255, 255) url("../images/default.gif") no-repeat scroll right center / 20px auto !important;
+}
+
+.logo-full{
+	display: block;
+}
+
+.page-sidebar-collapsed .logo-full{
+	display: none;
+}
+
+.logo-side{
+	display: none;
+}
+
+.page-sidebar-collapsed .logo-side{
+	display: block;
+}
