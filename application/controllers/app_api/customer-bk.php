@@ -25,9 +25,7 @@ class customer extends CI_Controller {
 		$email = $this->input->post('email');
 		$password = $this->input->post('password');		
 		$RoleId = 4;
-		
-		$currentdt= date('Y-m-d h:i:s');
-		$starttime = new DateTime($currentdt);
+	
 		
 		if(!empty($name) && !empty($email) && !empty($password))
 		{	///echo "yes";exit;
@@ -89,16 +87,9 @@ class customer extends CI_Controller {
 						$arr_json['EmailStatus'] = 'Email Sent Succesfully.';
 					}
 					$msgch ="Customer Added Succesfully!";
-					$arr_json['success'] = "1";
-					$arr_json['message'] = $msgch;
 					$arr_json['customer_details']= $get_last_customer_details;
-					
-					$Token = $Token;
-					$requestby = $Token;
-					$request_parameter = $_POST;
-					$apirequest = json_encode($request_parameter);
-					$Request_Type = "Customer Registration";
-					$this->general->api_logs($requestby,$apirequest,json_encode($arr_json),$arr_json['success'],$starttime,$Request_Type);
+					$arr_json['message'] = $msgch;
+					$arr_json['success'] = "1";
 				}	
 				else
 				{
@@ -128,10 +119,6 @@ class customer extends CI_Controller {
        $password = $this->input->post('password');
       // $roleid = $this->input->post('roleid');
        $roleid = 4;
-	   
-		$currentdt= date('Y-m-d h:i:s');
-		$starttime = new DateTime($currentdt);
-			
 		if(!empty($email) && !empty($password) && !empty($roleid) && is_numeric($roleid))
 		{
 			$result= $this->login_model->login_validate_customer($email,$password,$roleid);
@@ -148,13 +135,6 @@ class customer extends CI_Controller {
 				$msgch = "Login successful";
 				$success = array('success'=>'1','msg'=>$msgch);
 				$arr_json = array_merge($success,$data);
-				
-				$Token = $result['data']['Token'];
-				$requestby = $Token;
-				$request_parameter = $_POST;
-				$apirequest = json_encode($request_parameter);
-				$Request_Type = "Customer Login";
-				$this->general->api_logs($requestby,$apirequest,json_encode($arr_json),$arr_json['success'],$starttime,$Request_Type);
 			}
 	    }
 		else
@@ -170,14 +150,16 @@ class customer extends CI_Controller {
     /********** Customer Chnage password **********/
     public function change_password()	
 	{
-		$Apikey = $this->input->post('Apikey');
-		$old_pwd= $this->input->post('old_pwd');
-		$new_pwd= $this->input->post('new_pwd');
-		$cnf_pwd= $this->input->post('cnf_pwd');
-		$type = 'customer';
-			
-		$currentdt= date('Y-m-d h:i:s');
-		$starttime = new DateTime($currentdt);
+			// print_r($_POST);exit;
+			$currentdt= date('Y-m-d h:i:s');
+			$starttime = new DateTime($currentdt);
+			// $userid = $this->input->get('userid');
+			$Apikey = $this->input->post('Apikey');
+			$old_pwd= $this->input->post('old_pwd');
+			$new_pwd= $this->input->post('new_pwd');
+			$cnf_pwd= $this->input->post('cnf_pwd');
+			$type = 'customer';
+			// print_r($_POST);exit;
 			if(!empty($Apikey) && !empty($old_pwd) && !empty($new_pwd) && !empty($cnf_pwd))
 			{
 				$data = $this->general_model->verify_token($Apikey,$type);
@@ -211,13 +193,6 @@ class customer extends CI_Controller {
 							$msgch ="Your password change successfully.";
 							$arr_json['message'] = $msgch; 
 							$arr_json['success'] = 1;
-							
-							$Token = $Apikey;
-							$requestby = $Token;
-							$request_parameter = $_POST;
-							$apirequest = json_encode($request_parameter);
-							$Request_Type = "Customer's Password Change";
-							$this->general->api_logs($requestby,$apirequest,json_encode($arr_json),$arr_json['success'],$starttime,$Request_Type);
 						}
 					}
 					else
@@ -249,9 +224,6 @@ class customer extends CI_Controller {
 	{
 		$Apikey = $this->input->post('Apikey');
 		$type = "customer";
-		
-		$currentdt= date('Y-m-d h:i:s');
-		$starttime = new DateTime($currentdt);
 		
 		/* start verify the apitoken with driver token weather exist in db or not */
 			$token_result = $this->general_model->verify_token($Apikey,$type);
@@ -311,13 +283,6 @@ class customer extends CI_Controller {
 				$arr_json['success'] = "1";
 				$arr_json['message'] = $msgch;
 				$arr_json['RESULT'] = $status_array;
-				
-				$Token = $Apikey;
-				$requestby = $Token;
-				$request_parameter = $_POST;
-				$apirequest = json_encode($request_parameter);
-				$Request_Type = "Customer's jobhistory";
-				$this->general->api_logs($requestby,$apirequest,json_encode($arr_json),$arr_json['success'],$starttime,$Request_Type);
 			}
 			else
 			{
@@ -338,69 +303,56 @@ class customer extends CI_Controller {
 	/********** Display customer details by custome user token **************/
 	public function details()
     {
-		$token = $this->input->post('Apikey');
-		$type = 'customer';
-		   
-		$currentdt= date('Y-m-d h:i:s');
-		$starttime = new DateTime($currentdt);
-		
-			if(!empty($token))
-			{
-				$data = $this->general_model->verify_token($token,$type);
-				$result = $data['result'];
-				
-				if($result == 0)
-				{
-					  $arr_json['success'] = "0";
-					  $arr_json['message'] = "Invalide Token.";
-					  echo json_encode($arr_json);exit;
-				}
-				else
-				{	
-					if(isset($data))
-					{
-						//$driver_id = $data['data'][0]->Id;
-						//$driver_result= $this->drivermaster_model->get_driver_details($driver_id);
-						$driver_result = $data;
-						if(empty($driver_result))
-						{
-							$arr_json['success'] = "False";
-							$arr_json['message'] = "No Records found.";
-							echo json_encode($arr_json);exit;
-						}
-						else
-						{
-							//$msgch ="Profile Updated Success.";
-							$arr_json['success'] = "1";
-							$arr_json['message'] = "Customer details found.";        
-							$arr_json['result'] = $data['result'];
-							$arr_json['result'] = $data['data'];
-							  
-							$Token = $token;
-							$requestby = $Token;
-							$request_parameter = $_POST;
-							$apirequest = json_encode($request_parameter);
-							$Request_Type = "Customer Detail";
-							$this->general->api_logs($requestby,$apirequest,json_encode($arr_json),$arr_json['success'],$starttime,$Request_Type);
-							echo json_encode($arr_json);exit;
-						}
-					}
-				}
-			}
-			else
-			{
-				$msgch = "Missing Apikey."; 
-				$arr_json['success'] = "0"; 
-				$arr_json['message'] =  $msgch; 
-				echo json_encode($arr_json);exit;
-			} 
+            //$driver_id = $this->input->post('id');  
+	       $token = $this->input->post('Apikey');
+	       $type = 'customer';
+	       if(!empty($token)){
+	       $data = $this->general_model->verify_token($token,$type);
+	       
+	       $result = $data['result'];
+		    if($result == 0){
+		          $arr_json['success'] = "0";
+		          $arr_json['message'] = "Invalide Token.";
+		          echo json_encode($arr_json);exit;
+		    }
+	       	else
+	       	{	
+			        if(isset($data)){
+			         //$driver_id = $data['data'][0]->Id;
+			         //$driver_result= $this->drivermaster_model->get_driver_details($driver_id);
+			         $driver_result = $data;
+				         if(empty($driver_result))
+				         {
+				          $arr_json['success'] = "False";
+				          $arr_json['message'] = "No Records found.";
+				          echo json_encode($arr_json);exit;
+				         }
+				         else
+				         {
+				          //$msgch ="Profile Updated Success.";
+				          $arr_json['success'] = "1";
+				          $arr_json['message'] = "Customer details found.";        
+				          $arr_json['result'] = $data['result'];
+				          $arr_json['result'] = $data['data'];
+				          echo json_encode($arr_json);exit;
+				         }
+			        }
+	       	}
+	     }
+	     else{
+	        $msgch = "Missing Apikey."; 
+	        $arr_json['success'] = "0"; 
+	        $arr_json['message'] =  $msgch; 
+	        echo json_encode($arr_json);exit;
+	     } 
+   
     }
 
 
 	/************ Update Customer Profile ******************/
 	function Updateprofile()
 	{
-			$name=$this->input->post('Name');
+			
 			$token = $this->input->post('Apikey');
 			//$UserId=$this->input->post('UserId');
 			$country=$this->input->post('Country');
@@ -412,19 +364,8 @@ class customer extends CI_Controller {
 			$phoneno=$this->input->post('Phoneno');
 			//$ForgotEmailToken=$this->input->post('ForgotEmailToken');
 			
-	
 			$type = 'customer';
-			$currentdt= date('Y-m-d h:i:s');
-		$starttime = new DateTime($currentdt);
-		$timestamp = date('Y-m-d H:i:s');
-		$user_update_array=array( 
-									'Name'=>$name,
-									'UpdatedAt'=>$timestamp
-								);
-
-
-			if(!empty($token))
-			{
+			if(!empty($token)){
 				$data = $this->general_model->verify_token($token,$type);
 				$result = $data['result'];
 				if($result == 0){
@@ -437,7 +378,6 @@ class customer extends CI_Controller {
 					if(isset($data)){
 						//$UserId = $data['data'][0]->Id;
 						$UserId = $data['data'][0]->UserId;
-						$Customer_Name = $data['data'][0]->Name;
 					}
 				}
 			}
@@ -489,12 +429,6 @@ class customer extends CI_Controller {
 					   }
 				 }  
 					
-				if(!empty($name))
-				{
-					$user_update_query = $this->customermaster_model->update_user_data($user_update_array,$UserId);
-					
-				}
-				
 				  $customer_result = $this->customermaster_model->get_customer_details($UserId,$customerid='');
 				  if(!empty($customer_result)){
 					  $customerid = $customer_result[0]->Id;
@@ -530,34 +464,29 @@ class customer extends CI_Controller {
 						if(isset($phoneno) && !empty($phoneno)){
 							$customer_update_array['Phoneno']=$phoneno;
 						}				  
-					
-						if(!empty($building) || !empty($street) || !empty($country) || !empty($suburb) || !empty($state) || !empty($postcode) || !empty($phoneno))
-						{
-							$update_customer_data = $this->customermaster_model->update_customer_details($customerid,$customer_update_array);
-						}
-						
-						if(!empty($update_customer_data))
-						{
-							$customer_result = $this->customermaster_model->get_customer_details($UserId='',$update_customer_data);
-						    $arr_json['success'] = 'true';
-							$arr_json['message'] = "Customer Profile Updated Successfully.";
-							$arr_json['result'] = $customer_result;
-						  
-							$Token = $token;
-							$requestby = $Token;
-							$request_parameter = $_POST;
-							$apirequest = json_encode($request_parameter);
-							$Request_Type = "Customer Profile Update";
-							$this->general->api_logs($requestby,$apirequest,json_encode($arr_json),$arr_json['success'],$starttime,$Request_Type);
-							echo json_encode($arr_json);exit;
-						}
-						else
-						{
-							$arr_json['success'] = 'false';
-							$arr_json['message'] = "Record Already Updated.";
-							echo json_encode($arr_json);exit;
-						}
-				    }
+					  
+				  if(!empty($building) || !empty($street) || !empty($country) || !empty($suburb) || !empty($state) || !empty($postcode) || !empty($phoneno)){
+					  
+					  $update_customer_data = $this->customermaster_model->update_customer_details($customerid,$customer_update_array);
+					  
+  				  }	  
+					  if(!empty($update_customer_data)){
+						   $customer_result = $this->customermaster_model->get_customer_details($UserId='',$update_customer_data);
+						    
+						  $arr_json['success'] = 'true';
+						  $arr_json['message'] = "Customer Profile Updated Successfully.";
+						  $arr_json['result'] = $customer_result;
+						  echo json_encode($arr_json);exit;
+					  }
+					  else{
+						  $arr_json['success'] = 'false';
+						  $arr_json['message'] = "Record Already Updated.";
+						  echo json_encode($arr_json);exit;
+					  }
+					 
+					  
+					  
+				  }
 				  else{
 						$arr_json['success'] = 'false';
 						$arr_json['message'] = "Customer Profile Data Not Found.";
@@ -581,9 +510,6 @@ class customer extends CI_Controller {
 		$JobId = $this->input->post('JobId');
 		$type = "customer";
 		
-		$currentdt= date('Y-m-d h:i:s');
-		$starttime = new DateTime($currentdt);
-		
 		/**** start verify the apitoken with driver token weather exist in db or not ****/
 			
 			$token_result = $this->general_model->verify_token($Apikey,$type);
@@ -599,53 +525,28 @@ class customer extends CI_Controller {
 		$CustomerUserId = $token_result['data'][0]->UserId;
 		if(!empty($Apikey) && !empty($JobId))
 		{
-			$token_result = $this->general_model->verify_token($Apikey,$type);
-			$result = $token_result['result'];
-			$CustomerUserId = $token_result['data'][0]->UserId;
+			$Cust_job_trck_list = $this->customermaster_model->Get_customer_jobTracking($CustomerUserId,$JobId);
+			$List = $Cust_job_trck_list['result'];
+			$Customer_result = $Cust_job_trck_list['data'];
 			
-			if($result == 1)
+			$Customer_result[0]->PickupDetail = json_decode($Customer_result[0]->PickupDetail);
+			$Customer_result[0]->DropoffDetail = json_decode($Customer_result[0]->DropoffDetail);
+			$Customer_result[0]->StartLocation = json_decode($Customer_result[0]->StartLocation);
+			$Customer_result[0]->CurrentLocation = json_decode($Customer_result[0]->CurrentLocation);
+			
+			
+			if($List ==1)
 			{
-				$Cust_job_trck_list = $this->customermaster_model->Get_customer_jobTracking($CustomerUserId,$JobId);
-				$List = $Cust_job_trck_list['result'];
-				$Customer_result = $Cust_job_trck_list['data'];
-				
-				
-			   /*$Customer_result[0]->PickupDetail = json_decode($Customer_result[0]->PickupDetail);
-				$Customer_result[0]->DropoffDetail = json_decode($Customer_result[0]->DropoffDetail);
-				$Customer_result[0]->StartLocation = json_decode($Customer_result[0]->StartLocation);
-				$Customer_result[0]->CurrentLocation = json_decode($Customer_result[0]->CurrentLocation);*/
-				
-				if($List ==1)
-				{
-					$Customer_result[0]->PickupDetail = json_decode($Customer_result[0]->PickupDetail);
-					$Customer_result[0]->DropoffDetail = json_decode($Customer_result[0]->DropoffDetail);
-					$Customer_result[0]->StartLocation = json_decode($Customer_result[0]->StartLocation);
-					$Customer_result[0]->CurrentLocation = json_decode($Customer_result[0]->CurrentLocation);
-				
-					$MSG =  'Data Found.'; 
-					$arr_json['success'] = "1";
-					$arr_json['message'] = $MSG; 
-					$arr_json['Result'] = $Customer_result; 
-					
-					$Token = $Apikey;
-					$requestby = $Token;
-					$request_parameter = $_POST;
-					$apirequest = json_encode($request_parameter);
-					$Request_Type = "Customer jobTracking";
-					$this->general->api_logs($requestby,$apirequest,json_encode($arr_json),$arr_json['success'],$starttime,$Request_Type);
-				}
-				else
-				{
-					$MSG =  'Data not Available.'; 
-					$arr_json['success'] = "0";
-					$arr_json['message'] = $MSG; 
-				}
+				$MSG =  'Data Found.'; 
+				$arr_json['success'] = "1";
+				$arr_json['message'] = $MSG; 
+				$arr_json['Result'] = $Customer_result; 
 			}
 			else
 			{
-				$msgch ="Invalide Token.";
+				$MSG =  'Data not Available.'; 
 				$arr_json['success'] = "0";
-				$arr_json['message'] = $msgch;
+				$arr_json['message'] = $MSG; 
 			}
 		}
 		else
@@ -699,8 +600,6 @@ class customer extends CI_Controller {
 			echo json_encode($message); exit;
 		  }
 		 
-		$currentdt= date('Y-m-d h:i:s');
-		$starttime = new DateTime($currentdt);
 		
 		$verify_token = $this->general_model->verify_token($customertoken,'customer');
 		if($verify_token['result']==0){
@@ -762,13 +661,6 @@ class customer extends CI_Controller {
 						$arr_json['success'] = true;
 						$arr_json['message'] = "Review Added Successfully.";
 						$arr_json['result'] = $reviewdata_result;
-						
-						$requestby= $customertoken;
-						$request_parameter['Parameteres']['Header'] =  array('Content-Type'=>$header['Content-Type'],'Apikey'=>$header['Apikey']);				
-						$request_parameter['Parameteres']['Body'] =  array($request_data);
-						$apirequest = json_encode($request_parameter);
-						$Request_Type = "Customer jobReview & Rating";
-						$this->general->api_logs($requestby,$apirequest,json_encode($arr_json),$arr_json['success'],$starttime,$Request_Type);
 						echo json_encode($arr_json);exit;
 					}
 					else{

@@ -57,6 +57,9 @@
         <link href="<?php echo base_url() ?>assets/css/easy-autocomplete/easy-autocomplete.min.css" rel="stylesheet">
         
 		<link href="<?php echo base_url() ?>assets/css/easy-autocomplete/easy-autocomplete.themes.min.css" rel="stylesheet">
+		<style>
+			.logo-side{display: none;}
+		</style>
 
 
        
@@ -77,8 +80,9 @@
             <!-- Page Sidebar -->
             <div class="page-sidebar">
                 <a class="logo-box" href="<?php echo base_url()?>">
+					<img class="logo-side" src="<?php echo base_url() ?>assets/images/logo-Icon.png" width="40px"/>
                     <img class="logo-full" src="<?php echo base_url() ?>assets/images/logo-2.png" width="100%" />
-                    <img class="logo-side" src="<?php echo base_url() ?>assets/images/logo-Icon.png" width="100%" />
+                    
 
                     <!-- <span>SSTech Driver</span> -->
                     <!-- <i class="icon-radio_button_unchecked" id="fixed-sidebar-toggle-button"></i>

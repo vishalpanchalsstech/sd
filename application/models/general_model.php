@@ -20,10 +20,21 @@ class general_model extends CI_Model{
 	}
 	/***************** Check and email duplicate or validate********************/
 	 public function emailvalidate($email,$RoleId)
-	 {	  
+	 {
+	 $query="";
+	 if($RoleId==3){	  
 	  $query = $this->db->query("SELECT um.Id FROM usermaster as um
 	   join drivermaster as dm on dm.UserId = um.Id
 	   WHERE um.Email = '$email' AND um.RoleId='$RoleId' AND dm.Enable=1");
+	 }elseif ($RoleId==4) {
+	 	$query = $this->db->query("SELECT um.Id FROM usermaster as um
+	   join customermaster as cm on cm.UserId = um.Id
+	   WHERE um.Email = '$email' AND um.RoleId='$RoleId' AND cm.Enable=1");
+	 }
+	 else{
+	 	$query = $this->db->query("SELECT Id FROM usermaster
+	   WHERE Email = '$email' AND RoleId='$RoleId' AND Enable=1");
+	 }
 	 // echo $this->db->last_query();
 	  $querys = $query->result();
 	  
